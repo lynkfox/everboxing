@@ -11,11 +11,7 @@ public class movementController : MonoBehaviour
 
 
     private bool jumping = false;
-
-
-
-   
-    private Vector3 currentUp { get; set; }  // Which direction is 'Up' for the camera. Needs to be able to be changed and called (so get/set)
+    
     private float startDegree;
 
 
@@ -25,12 +21,6 @@ public class movementController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>(); // get the players RigidBody aspect for ease of typing
-        
-
-        currentUp = transform.up; // set Up when the scene first loads.
-        
-
-
 
     }
 
@@ -64,9 +54,18 @@ public class movementController : MonoBehaviour
             {
                 rb.AddForce(Vector3.up * jumpHeight);
                 jumping = true;
+                StartCoroutine(JumpLand());
             }
         }
     }
+
+    IEnumerator JumpLand()
+    {
+        yield return new WaitForSeconds(1);
+        jumping = false;
+    }
+
+    /*
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -76,7 +75,7 @@ public class movementController : MonoBehaviour
         }
     }
 
-
+    */
     
 
 }

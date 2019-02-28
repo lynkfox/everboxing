@@ -11,15 +11,23 @@ public class RotateController : MonoBehaviour
     // public flags for use in other scripts. Other objects will need to know if the world is moving clock or counter clockwise, or even if it is moving
     private bool rotatingClockwise = false, rotatingCounterClock = false, levelRotating = false;
 
+    private Quaternion currentUp { get; set; }  // Which direction is 'Up' for the camera. Needs to be able to be changed and called (so get/set)
 
     private Quaternion toAngle, startAngle;
     private int rotateCount = 0;
     private Transform level;
+    private float upDegree;
 
+    [ExecuteInEditMode]
+    void OnValidate()
+    {
+        rotationDegree = Mathf.Clamp(rotationDegree, 5,90);
+    }
 
     private void Awake()
     {
- 
+
+        currentUp = Quaternion.LookRotation(Vector3.up, Vector3.up); // set Up when the scene first loads.
         level = this.transform; //shorthand, chached.
 
         startAngle = Quaternion.identity; // Make sure the level startAngle is set to No Rotation to start.
@@ -40,7 +48,7 @@ public class RotateController : MonoBehaviour
                 levelRotating = true;
                 rotateCount--;
                 toAngle = transform.rotation * Quaternion.AngleAxis(rotationDegree, -transform.forward);
-
+                 
             }
             else if (Input.GetAxisRaw("Rotate") < 0)
             {
@@ -50,6 +58,7 @@ public class RotateController : MonoBehaviour
                 levelRotating = true;
                 rotateCount++;
                 toAngle = transform.rotation * Quaternion.AngleAxis(rotationDegree, transform.forward);
+                
             }
 
         }
@@ -102,6 +111,14 @@ public class RotateController : MonoBehaviour
                 rotatingClockwise = false;
                 levelRotating = false;
                 player.transform.parent = null;
+                if (rotationDegree == 90)
+                    upDegree = rotationDegree;
+                else if(rotationDegree < 90)
+                {
+                    upDegree = (90 / rotationDegree - 1) * rotationDegree;
+                }
+
+                currentUp = transform.rotation * transform.rotation * Quaternion.AngleAxis(upDegree, transform.forward); // sets the curr
             }
         }
         
